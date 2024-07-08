@@ -14,7 +14,7 @@ The **Remote Control App** facilitates communication between operators and admin
 - **Install Java Development Kit (JDK) and Apache Maven on your server.
 
 ## Installation
-- **Clone the repository: git clone https://github.com/your/repository.git
+- **Clone the repository: git clone [https://github.com/your/repository.git](https://github.com/Tzion-ADT/DFM-Remote-Control.git)
 - **Navigate to the project directory: cd remote-control-app
 - **Build the application using Maven: mvn clean install
 
