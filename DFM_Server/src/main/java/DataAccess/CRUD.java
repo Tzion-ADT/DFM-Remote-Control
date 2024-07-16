@@ -1,2 +1,5 @@
-package DataAccess;public class CRUD {
+package DataAccess;
+
+public class CRUD {
+
 }
