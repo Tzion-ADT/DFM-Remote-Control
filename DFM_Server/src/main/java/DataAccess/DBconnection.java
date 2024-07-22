@@ -2,7 +2,7 @@ package DataAccess;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-public class DBconnection {
+public class DBconnection implements AutoCloseable {
     private static DBconnection instance = null;
 
     public Connection connection;
@@ -31,4 +31,9 @@ public class DBconnection {
         return connection;
     }
 
+    @Override
+    public void close() throws Exception {
+        if(connection != null && !connection.isClosed())
+            instance.getConnction().close();
+    }
 }

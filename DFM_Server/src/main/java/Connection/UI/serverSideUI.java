@@ -1,14 +1,13 @@
 package Connection.UI;
 
 import Connection.ServerSide.ServerSideConnection;
+import DataAccess.GenericDAOImpl;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
-import static Connection.ServerSide.ServerSideConnection.*;
 
 public class serverSideUI {
     public static void main (String []args) {
@@ -87,6 +86,11 @@ public class serverSideUI {
 
         //activate the UI
         simpleUI.setVisible(true);
+
+        //Test for the DB
+        System.out.println("test SQL work");
+        GenericDAOImpl genericDAO = new GenericDAOImpl();
+        System.out.println(genericDAO.getPropertyByColumnAndTable("swname" , "profiles" , ""));
     }
 
 }

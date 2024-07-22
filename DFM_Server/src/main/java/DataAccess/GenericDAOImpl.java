@@ -1,6 +1,6 @@
 package DataAccess;
 
-import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,8 +8,9 @@ import java.util.List;
 
 public class GenericDAOImpl<T> implements GenericDAO<T> {
 
-    private DBconnection getConnection() throws SQLException {
-        return DBconnection.getInstance();
+    private Connection getConnection() throws SQLException {
+        Connection conn = DBconnection.getInstance().getConnction();
+        return conn;
     }
 
     @Override
@@ -19,22 +20,26 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     @Override
     public T getById(int id, Class<T> clazz) {
-        String sql = "SELECT * FROM " + clazz.getSimpleName().toLowerCase() + " WHERE id = ?";
+        return null;
+    }
+
+
+    public T getPropertyByColumnAndTable(String columnName, String tableName , String propertyName) {
+        String sql = "SELECT * FROM " + tableName ;
         T obj = null;
 
-        try (DBconnection conn = getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
+                //pstmt.setString(1, "swname");
+                ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
-                obj = clazz.getDeclaredConstructor().newInstance();
-                for (Field field : clazz.getDeclaredFields()) {
-                    field.setAccessible(true);
-                    field.set(obj, rs.getObject(field.getName()));
+                while (rs.next()) {
+                   // if()
+                    System.out.println(rs.next());
+                    String nameObj = rs.getString("swname");
+
                 }
-            }
-        } catch (SQLException | ReflectiveOperationException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
