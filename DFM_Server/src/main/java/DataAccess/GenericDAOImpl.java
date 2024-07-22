@@ -8,8 +8,26 @@ import java.util.List;
 
 public class GenericDAOImpl<T> implements GenericDAO<T> {
 
+    private static String VERSION_ROOT_FOLDER_NAME = "ADT";
+    private static String  ROOT_DRIVER_FOLDER= "D:";
+    private static String  JAVA_SQLITE_DRIVER= "jdbc:sqlite:";
+
+    private static String DB = "db";
+
+    public GenericDAOImpl() {
+        getVersion();
+    }
+
+    private void getVersion() {
+
+    }
+
     private Connection getConnection() throws SQLException {
-        Connection conn = DBconnection.getInstance().getConnction();
+        //The location of the database will be the same for each customer : D:\ADT\...."the version"
+        //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER +"\\"+ VERSION_ROOT_FOLDER_NAME+"\\"+______ WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
+
+        //**************************For tests only**************************//
+        Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER+"D:\\\\subversion\\\\Android\\\\dfm_remote_control\\\\DFM_Server\\\\db\\\\gui.db").getConnction();
         return conn;
     }
 
@@ -24,7 +42,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     }
 
 
-    public T getPropertyByColumnAndTable(String columnName, String tableName , String propertyName) {
+    public T getPropertyBydbAndColumnAndTable(String DB , String columnName, String tableName , String propertyName) {
         String sql = "SELECT * FROM " + tableName ;
         T obj = null;
 

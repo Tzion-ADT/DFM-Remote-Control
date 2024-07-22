@@ -90,7 +90,7 @@ public class serverSideUI {
         //Test for the DB
         System.out.println("test SQL work");
         GenericDAOImpl genericDAO = new GenericDAOImpl();
-        System.out.println(genericDAO.getPropertyByColumnAndTable("swname" , "profiles" , ""));
+        System.out.println(genericDAO.getPropertyBydbAndColumnAndTable("gui","swname" , "profiles" , ""));
     }
 
 }

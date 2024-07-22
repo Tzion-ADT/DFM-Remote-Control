@@ -32,6 +32,7 @@ public class ServerSideConnection extends SwingWorker<Void , List<String>> {
                     Socket clientSide = serverSide.accept();
                     System.out.println("connected to " + clientSide.getInetAddress().getHostAddress());
 
+                    //in the following , the connection to the DB will establish
                     Thread clientSideHandlerThread = new Thread(new Clienthandler(clientSide));
                     clientSideHandlerThread.start();
 
