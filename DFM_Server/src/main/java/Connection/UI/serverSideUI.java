@@ -86,11 +86,6 @@ public class serverSideUI {
 
         //activate the UI
         simpleUI.setVisible(true);
-
-        //Test for the DB
-        System.out.println("test SQL work");
-        GenericDAOImpl genericDAO = new GenericDAOImpl();
-        System.out.println(genericDAO.getPropertyBydbAndColumnAndTable("gui","swname" , "profiles" , ""));
     }
 
 }

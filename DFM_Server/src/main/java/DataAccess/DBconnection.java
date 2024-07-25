@@ -10,10 +10,10 @@ public class DBconnection implements AutoCloseable {
     private static String GUI_DB = "gui.db";
 
     //PP DB
-    private static String PP_DB = "gui.db";
+    private static String PP_DB = "pp.db";
 
     //PERS DB
-    private static String PERS_DB = "gui.db";
+    private static String PERS_DB = "pers.db";
     //*****************************************************************//
 
     public Connection connection;
@@ -23,13 +23,13 @@ public class DBconnection implements AutoCloseable {
 
     private DBconnection (String DBurl , String DB) throws SQLException {
         try{
-            this.connection = DriverManager.getConnection(DBurl);
+            this.connection = DriverManager.getConnection(DBurl + DB);
         }catch (SQLException ex){
-            throw new SQLException("Failed to create the database connection.", ex);
+            throw new SQLException("Failed to create the database connection to: ." + DBurl + DB, ex);
         }
     }
 
-    public static DBconnection getInstance(String DBurl) throws SQLException {
+    public static DBconnection getInstance(String DBurl , String DB) throws SQLException {
         if(instance == null){
             instance = new DBconnection(DBurl , DB);
         }
