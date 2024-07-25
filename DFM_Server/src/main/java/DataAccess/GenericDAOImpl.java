@@ -25,6 +25,19 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     private String currentVersion = null;
     //******************************************************************
 
+    //**********************All DB Options ****************************//
+    //GUI DB
+    private static final String GUI_DB = "gui.db";
+
+    //PP DB
+    private static final String PP_DB = "pp.db";
+
+    //PERS DB
+    private static final String PERS_DB = "pers.db";
+
+    private static final String LOG_DB = "log.db";
+    //*****************************************************************//
+
     public GenericDAOImpl() {
         currentVersion = getVersion();
     }
@@ -75,13 +88,35 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
             return null;
         }
     }
-    private Connection getConnection() throws SQLException {
+    private Connection getConnection() {
         //The location of the database will be the same for each customer : D:\ADT\...."the version"
-        Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER +"\\"+this.currentVersion+"\\"+DB +"\\" , "gui.db"); //WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
+        Connection conn = null;
+        chooseDb(conn);
 
         //**************************For tests only**************************//
         //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER+"D:\\\\subversion\\\\Android\\\\dfm_remote_control\\\\DFM_Server\\\\db\\" , "\\gui.db").getConnction();
         return conn;
+    }
+
+    private void chooseDb(Connection conn ,String DB) {
+        String chosenDB = "";
+
+        try {
+            switch (DB){
+                case GUI_DB:  chosenDB = new String (GUI_DB);  break;
+                case PERS_DB: chosenDB = new String (PERS_DB); break;
+                case PP_DB:   chosenDB = new String (PP_DB);   break;
+                case LOG_DB:  chosenDB = new String (LOG_DB);  break;
+
+                default: break;
+            }
+
+            if(!chosenDB.isEmpty())
+                conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER + "\\" + this.currentVersion + "\\" + DB + "\\", chosenDB); //WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
+
+        }catch (Exception ex){
+            //To Do --> Need to handle exception 25.07.24 - Tzion
+        }
     }
 
     //check if the OS is 64 bit or 32 bit

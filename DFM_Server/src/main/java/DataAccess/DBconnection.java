@@ -4,18 +4,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 public class DBconnection implements AutoCloseable {
     private static Connection connectionInstance = null;
-
-    //**********************All DB Options ****************************//
-    //GUI DB
-    private static String GUI_DB = "gui.db";
-
-    //PP DB
-    private static String PP_DB = "pp.db";
-
-    //PERS DB
-    private static String PERS_DB = "pers.db";
-    //*****************************************************************//
-
     //temp --> for tests ONLY
     //private String url = "jdbc:sqlite:D:\\subversion\\Android\\dfm_remote_control\\DFM_Server\\db\\gui.db";//will contain the DB path
 
