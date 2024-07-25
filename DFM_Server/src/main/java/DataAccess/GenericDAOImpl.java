@@ -14,6 +14,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     //*********************Private usefully Strings*********************
     private static String VERSION_ROOT_FOLDER_NAME = "ADT";
+    private static String DEBUG_SUBVERSION ="subversion";
     private static String  ROOT_DRIVER_FOLDER= "D:";
     private static String  JAVA_SQLITE_DRIVER= "jdbc:sqlite:";
     private static String HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE";
@@ -21,28 +22,28 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     private static String BIT_32_APP = "WOW6432Node";
 
     private static String DB = "db";
+    private String currentVersion = null;
     //******************************************************************
 
     public GenericDAOImpl() {
-        getVersion();
+        currentVersion = getVersion();
     }
 
     // Get the GUI version --> for the root folder in future
-    private void getVersion() {
+    private String getVersion() {
         //Need to change depend on the app, if it is:
         //      1. 64 bit --> SOFTWARE\ADT
         //      1. 32 bit --> SOFTWARE\WOW6432Node\ADT
         String location = null;
         if(is64BitOS()){
-            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\"+BIT_32_APP+"\\ADT";
+            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\"+BIT_32_APP+"\\"+VERSION_ROOT_FOLDER_NAME;
         }else
-            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\\\ADT";
+            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\"+VERSION_ROOT_FOLDER_NAME;
+
 
         String key = "RootPath";
 
-        String value = readRegistry(location, key);
-        boolean is64Bit = is64BitOS();
-        int x=01;
+        return readRegistry(location, key);
     }
     public static String readRegistry(String location, String key) {
         try {
@@ -54,14 +55,16 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             String result = null;
+            int siftToTheRight = 1;
 
             // Read the output of the command
             while ((line = reader.readLine()) != null) {
                 if (line.contains(key)) {
                     // Split the line and get the last part, which should be the value
-                    String [] parts   = line.split("\\s+");
-                    String [] version = parts[parts.length - 1].split("\\\\");
-                    result = version[version.length - 1];
+                    String [] allPath   = line.split("\\s+");
+                    String fullRrootPath = allPath[allPath.length -1 ];
+
+                    result = fullRrootPath.substring(fullRrootPath.indexOf("\\") + siftToTheRight);
                 }
             }
             reader.close();
@@ -74,10 +77,10 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     }
     private Connection getConnection() throws SQLException {
         //The location of the database will be the same for each customer : D:\ADT\...."the version"
-        //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER +"\\"+ VERSION_ROOT_FOLDER_NAME+"\\"+______ WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
+        Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER +"\\"+this.currentVersion+"\\"+DB +"\\" , "gui.db"); //WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
 
         //**************************For tests only**************************//
-        Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER+"D:\\\\subversion\\\\Android\\\\dfm_remote_control\\\\DFM_Server\\\\db\\" , "\\gui.db").getConnction();
+        //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER+"D:\\\\subversion\\\\Android\\\\dfm_remote_control\\\\DFM_Server\\\\db\\" , "\\gui.db").getConnction();
         return conn;
     }
 
@@ -100,7 +103,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
                    // if()
                     System.out.println(rs.next());
                     String nameObj = rs.getString("swname");
-
+                    System.out.println(nameObj);
                 }
         } catch (Exception e) {
             System.out.println(e.getMessage());
