@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.lang.reflect.Method;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     // Windows registry root keys
@@ -23,13 +27,39 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     }
 
     private void getVersion() {
-        String key = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\ADT";
-        String valueName = "IsDebug";
+        String location = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\ADT";
+        String key = "RootPath";
 
-        String value = readString(HKEY_LOCAL_MACHINE, key, valueName);
+        String value = readRegistry(location, key);
         int x = 20;
     }
+    public static String readRegistry(String location, String key) {
+        try {
+            // Create the command to read the registry
+            String command = "reg query \"" + location + "\" /v " + key;
 
+            // Run the command
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            String result = null;
+
+            // Read the output of the command
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(key)) {
+                    // Split the line and get the last part, which should be the value
+                    String[] parts = line.split("\\s+");
+                    result = parts[parts.length - 1];
+                }
+            }
+            reader.close();
+            return result;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private Connection getConnection() throws SQLException {
         //The location of the database will be the same for each customer : D:\ADT\...."the version"
         //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER + ROOT_DRIVER_FOLDER +"\\"+ VERSION_ROOT_FOLDER_NAME+"\\"+______ WILL BE THE CURRENT VERSION FROM REGISTRY+DB+"\\").getConnction();
@@ -86,50 +116,4 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     public void delete(int id, Class<T> clazz) {
 
     }
-
-    // Utility method to convert a string to a null-terminated byte array
-    private static byte[] toCstr(String str) {
-        byte[] result = new byte[str.length() + 1];
-        for (int i = 0; i < str.length(); i++) {
-            result[i] = (byte) str.charAt(i);
-        }
-        result[str.length()] = 0; // null-terminate
-        return result;
-    }
-
-    // Method to read a string value from the registry
-    public static String readString(int hkey, String key, String valueName) {
-        try {
-            // Get the Class object for WindowsPreferences
-            Class<?> clazz = Class.forName("java.util.prefs.WindowsPreferences");
-
-            // Get the Method objects for the required methods
-            Method openKey = clazz.getDeclaredMethod("WindowsRegOpenKey", int.class, byte[].class, int.class);
-            openKey.setAccessible(true);
-            Method closeKey = clazz.getDeclaredMethod("WindowsRegCloseKey", int.class);
-            closeKey.setAccessible(true);
-            Method queryValue = clazz.getDeclaredMethod("WindowsRegQueryValueEx", int.class, byte[].class);
-            queryValue.setAccessible(true);
-
-            // Open the registry key
-            int[] handles = (int[]) openKey.invoke(null, hkey, toCstr(key), 0x20019);
-            if (handles[1] != 0) {
-                throw new IllegalAccessException("Failed to open key: " + key);
-            }
-
-            // Query the value
-            byte[] valb = (byte[]) queryValue.invoke(null, handles[0], toCstr(valueName));
-            String value = (valb != null ? new String(valb).trim() : null);
-
-            // Close the registry key
-            closeKey.invoke(null, handles[0]);
-
-            return value;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }
