@@ -1,9 +1,11 @@
 package DataAccess;
 
+import LogInfo.LoggerInfo;
+import org.slf4j.Logger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import java.io.BufferedReader;
@@ -13,19 +15,25 @@ import java.io.InputStreamReader;
 public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     //*********************Private usefully Strings*********************
+    //SQLIte driver:
+    private static String  JAVA_SQLITE_DRIVER= "jdbc:sqlite:";
+
+    //Folders:
+    private static String DB = "db";
     private static String VERSION_ROOT_FOLDER_NAME = "ADT";
     private static String DEBUG_SUBVERSION ="subversion";
     private static String  ROOT_DRIVER_FOLDER= "D:";
-    private static String  JAVA_SQLITE_DRIVER= "jdbc:sqlite:";
+
+    //Registry path:
     private static String HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE";
     private static String SOFTWARE = "SOFTWARE";
-    private static String BIT_32_APP = "WOW6432Node";
+    private static String APP_32_BIT = "WOW6432Node";
+    private static String key = "RootPath";
 
-    private static String DB = "db";
     private String currentVersion = null;
     //******************************************************************
 
-    //**********************All DB Options ****************************//
+    //************************DB Options ******************************//
     //GUI DB
     private static final String GUI_DB = "gui.db";
 
@@ -37,26 +45,41 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     private static final String LOG_DB = "log.db";
     //*****************************************************************//
+    //************************LoggerDebug******************************//
+    private Logger loggerInfo;
+    //*****************************************************************//
+
 
     public GenericDAOImpl() {
+        //using Single instance
+        loggerInfo = LoggerInfo.getLogger();
+
         currentVersion = getVersion();
     }
 
     // Get the GUI version --> for the root folder in future
     private String getVersion() {
-        //Need to change depend on the app, if it is:
-        //      1. 64 bit --> SOFTWARE\ADT
-        //      1. 32 bit --> SOFTWARE\WOW6432Node\ADT
-        String location = null;
-        if(is64BitOS()){
-            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\"+BIT_32_APP+"\\"+VERSION_ROOT_FOLDER_NAME;
-        }else
-            location = HKEY_LOCAL_MACHINE+"\\"+SOFTWARE+"\\"+VERSION_ROOT_FOLDER_NAME;
+        loggerInfo.error("test log file");
 
+        String result= "";
+        String location  = "";
 
-        String key = "RootPath";
+        try {
+            //Need to change depend on the app version and the OS:
+            //      1. 64 bit --> SOFTWARE\ADT
+            //      1. 32 bit --> SOFTWARE\WOW6432Node\ADT
+            if (is64BitOS()) {
+                location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + APP_32_BIT + "\\" + VERSION_ROOT_FOLDER_NAME;
+            } else {
+                location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + VERSION_ROOT_FOLDER_NAME;
+            }
 
-        return readRegistry(location, key);
+            result = readRegistry(location, key);
+        }
+        catch (Exception ex){
+            loggerInfo.error("error in GenericDAOImpl class --> getVersion() --> readRegistry");
+        }
+        return result;
     }
     public static String readRegistry(String location, String key) {
         try {
@@ -91,7 +114,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
     private Connection getConnection() {
         //The location of the database will be the same for each customer : D:\ADT\...."the version"
         Connection conn = null;
-        chooseDb(conn);
+        //chooseDb(conn);
 
         //**************************For tests only**************************//
         //Connection conn = DBconnection.getInstance(JAVA_SQLITE_DRIVER+"D:\\\\subversion\\\\Android\\\\dfm_remote_control\\\\DFM_Server\\\\db\\" , "\\gui.db").getConnction();

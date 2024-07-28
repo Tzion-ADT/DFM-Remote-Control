@@ -23,7 +23,12 @@ public class Clienthandler implements Runnable{
             GenericDAOImpl genericDAO = new GenericDAOImpl();
             System.out.println(genericDAO.getPropertyBydbAndColumnAndTable("gui","swname" , "profiles" , ""));
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            System.out.println("******************************************");
+            System.out.println("Thread exception");
+            System.out.println(e.toString());
+            System.out.println("******************************************\n");
+        }
         //******************************************************************************************
     }
 }

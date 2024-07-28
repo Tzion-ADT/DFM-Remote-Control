@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Define an appender named FILE that logs to a file -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <!-- Path to the log file -->
+        <file>logs/app.log</file>
+        <append>true</append>
+        <encoder>
+            <!-- Pattern for formatting log messages -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Configure the root logger to use the FILE appender at the DEBUG level -->
+    <root level="debug">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
