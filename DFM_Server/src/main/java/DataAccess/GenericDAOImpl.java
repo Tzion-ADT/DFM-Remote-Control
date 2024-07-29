@@ -51,28 +51,41 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
 
     public GenericDAOImpl() {
-        //using Single instance
+        //Single instance
         loggerInfo = LoggerInfo.getLogger();
 
         currentVersion = getVersion();
     }
 
-    // Get the GUI version --> for the root folder in future
+    // Get GUI version
     private String getVersion() {
-        loggerInfo.error("test log file");
-
         String result= "";
         String location  = "";
 
         try {
+            //check if GUI is 64 bit
+            location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + VERSION_ROOT_FOLDER_NAME;
+            String is64 = readRegistry(location, key);
+            //there is chance that it is not 64 bit
+            //doing this only to get some path to the version
+            //will check in the next lines in 100% if it is 32 or 64 bit application
+            if(is64 == null){
+                //set it to 32 bit path
+                location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + APP_32_BIT + "\\" + VERSION_ROOT_FOLDER_NAME;
+            }
+
             //Need to change depend on the app version and the OS:
             //      1. 64 bit --> SOFTWARE\ADT
             //      1. 32 bit --> SOFTWARE\WOW6432Node\ADT
-            if (is64BitOS()) {
-                location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + APP_32_BIT + "\\" + VERSION_ROOT_FOLDER_NAME;
-            } else {
-                location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + VERSION_ROOT_FOLDER_NAME;
-            }
+            //if (isApp_64Bit(ROOT_DRIVER_FOLDER +"\\"+ readRegistry(location, key)+"\\src\\NewGUI\\bin\\Release\\NewGUI.exe")) {
+            //    loggerInfo.info("");
+            //    location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + APP_32_BIT + "\\" + VERSION_ROOT_FOLDER_NAME;
+            //} else {
+            //    location = HKEY_LOCAL_MACHINE + "\\" + SOFTWARE + "\\" + VERSION_ROOT_FOLDER_NAME;
+            //}
+
+            loggerInfo.info("Get data from the registry successfully ");
+            loggerInfo.info("getVersion()");
 
             result = readRegistry(location, key);
         }
@@ -81,6 +94,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
         }
         return result;
     }
+
     public static String readRegistry(String location, String key) {
         try {
             // Create the command to read the registry
@@ -142,12 +156,6 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
         }
     }
 
-    //check if the OS is 64 bit or 32 bit
-    public static boolean is64BitOS() {
-        String osArch = System.getProperty("os.arch");
-        return osArch.contains("64");
-    }
-
     public T getPropertyBydbAndColumnAndTable(String DB , String columnName, String tableName , String propertyName) {
         String sql = "SELECT * FROM " + tableName ;
         T obj = null;
@@ -169,7 +177,6 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
         return obj;
     }
-
 
     @Override
     public void insert(T obj) {
