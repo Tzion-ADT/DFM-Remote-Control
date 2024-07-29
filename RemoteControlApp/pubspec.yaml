@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  http: ^0.13.3
+
   flutter:
     sdk: flutter
 
@@ -43,7 +45,7 @@ dependencies:
   equatable: ^2.0.5
 
   # Fonts And Icon
-  google_fonts: ^5.1.0
+  google_fonts: ^4.0.4
 
 dev_dependencies:
   flutter_test:
