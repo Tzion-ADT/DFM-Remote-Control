@@ -18,8 +18,9 @@ class _TcpClientExampleState extends State<ClientCommunication> {
   @override
   initState(){
     super.initState();
-      
-}
+    _connectToServer();
+
+  }
 void _connectToServer() async{
     try {
       _socket = await Socket.connect('199.203.44.142', 1999);

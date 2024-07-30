@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dfm_remote_control/ClientSide/ClientCommunication.dart';
 import 'package:flutter/material.dart';
 
 import 'machineView.dart';
@@ -83,9 +86,13 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  void openMachineView(var user){
+  Future<void> openMachineView(var user) async {
     if(_submitForm(_selectedItem)) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MachineView(userName: _selectedItem.toString())));
+      final InternetAddress serverAddress = InternetAddress('199.203.44.142');
+      const port = 1999;
+      Socket _socket = await Socket.connect(serverAddress, 1999);
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => MachineView(userName: _selectedItem.toString())));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ClientCommunication()));
     } else {
       showDialog(
           context: context,
