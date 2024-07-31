@@ -3,17 +3,21 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ServerSideConnection extends SwingWorker<Void , List<String>> {
 
     private static ServerSocket serverSide;
     private int portNumber;
+    private Set<String> Ips;//using set because it is unique datastructures
     private JLabel clientIPLabel;
 
     public  ServerSideConnection(int portNumber , JLabel clientIPLabel){
         this.portNumber = portNumber;
         this.clientIPLabel = clientIPLabel;
+        Ips = new HashSet<>();
     }
 
     /*
@@ -22,32 +26,34 @@ public class ServerSideConnection extends SwingWorker<Void , List<String>> {
      */
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
         try{
             serverSide = new ServerSocket(portNumber);
             System.out.println("Port number is: "+ portNumber);
 
             while(true){
                 try{
-                    Socket clientSide = serverSide.accept();
-                    System.out.println("connected to " + clientSide.getInetAddress().getHostAddress());
 
-                    //in the following , the connection to the DB will establish
-                    Thread clientSideHandlerThread = new Thread(new Clienthandler(clientSide));
-                    clientSideHandlerThread.start();
+                        Socket clientSide = serverSide.accept();
+                        if(!Ips.contains(clientSide.getInetAddress().getHostAddress())) {
+                            System.out.println("connected to " + clientSide.getInetAddress().getHostAddress());
 
-                    List<String> clientDetailsList = new ArrayList<>();
-                    clientDetailsList.add(clientSide.getInetAddress().getHostAddress());
-                    clientDetailsList.add(clientSide.getInetAddress().getHostName());
+                            //in the following , the connection to the DB will establish
+                            Thread clientSideHandlerThread = new Thread(new Clienthandler(clientSide , Ips));
+                            clientSideHandlerThread.start();
 
-                    publish(clientDetailsList);//this will help to use the data in every new connection
+                            List<String> clientDetailsList = new ArrayList<>();
+                            clientDetailsList.add(clientSide.getInetAddress().getHostAddress());
+                            clientDetailsList.add(clientSide.getInetAddress().getHostName());
 
+                            publish(clientDetailsList);//this will help to use the data in every new connection
+                        }
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
                 finally {
                     if(serverSide != null){
-//                        serverSide.close();
+                        //serverSide.close();
                     }
                 }
             }
@@ -63,6 +69,7 @@ public class ServerSideConnection extends SwingWorker<Void , List<String>> {
             for (List<String> clientData : chunks) {
                 this.clientIPLabel.setText(this.clientIPLabel.getText() + "<br>"
                         + "IP :" + clientData.get(0) + " , PC Name :" + clientData.get(1));
+                Ips.add(clientData.get(0));
             }
             System.out.println(this.clientIPLabel.getText() + "</html>");
         }
