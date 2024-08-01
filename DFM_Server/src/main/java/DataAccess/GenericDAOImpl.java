@@ -12,6 +12,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+////////////////////////////////////////////////////////////////////////////////
+//
+//  COPYRIGHT (c) 2024 ADT, INC.
+//
+//  This software is the property of ADT Industries, Inc.
+//  Any reproduction or distribution to a third party is
+//  strictly forbidden unless written permission is given by an
+//  authorized agent of ADT.
+//
+//  DESCRIPTION
+//		Implementation for CRUD operations
+//
+//
+//	Date		Name								Description
+//	----------------------------------------------------------------------------
+// 2024         Tzion
+//
+//=============================================================================
+
 public class GenericDAOImpl<T> implements GenericDAO<T> {
 
     //*********************Private usefully Strings*********************

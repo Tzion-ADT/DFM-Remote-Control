@@ -1,13 +1,32 @@
 package Connection.UI;
 
 import Connection.ServerSide.ServerSideConnection;
-import DataAccess.GenericDAOImpl;
+import LogInfo.LoggerInfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  COPYRIGHT (c) 2024 ADT, INC.
+//
+//  This software is the property of ADT Industries, Inc.
+//  Any reproduction or distribution to a third party is
+//  strictly forbidden unless written permission is given by an
+//  authorized agent of ADT.
+//
+//  DESCRIPTION
+//		Definition for Application Main Class
+//
+//
+//	Date		Name								Description
+//	----------------------------------------------------------------------------
+// 2024         Tzion
+//
+//=============================================================================
 
 public class serverSideUI {
     public static void main (String []args) {
@@ -46,12 +65,15 @@ public class serverSideUI {
                 if(portNumberString != null) {
                     try {
                         int portNUmber = Integer.parseInt(portNumberString);
+                        LoggerInfo.getLogger().info("User choose port number: "+portNumberString);
                         SwingWorker<Void, List<String>> serverWorker = new SwingWorker<Void, List<String>>() {
 
                             @Override
                             protected Void doInBackground() throws Exception {
                                 ServerSideConnection runServer = new ServerSideConnection(portNUmber , clientIPLabel);
+                                LoggerInfo.getLogger().info("runServer.execute();");
                                 runServer.execute();
+
                                 return null;
                             }
                         };
@@ -87,5 +109,4 @@ public class serverSideUI {
         //activate the UI
         simpleUI.setVisible(true);
     }
-
 }

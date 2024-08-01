@@ -1,11 +1,33 @@
 package Connection.ServerSide;
+import LogInfo.LoggerInfo;
+
 import javax.swing.*;
 import java.net.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  COPYRIGHT (c) 2024 ADT, INC.
+//
+//  This software is the property of ADT Industries, Inc.
+//  Any reproduction or distribution to a third party is
+//  strictly forbidden unless written permission is given by an
+//  authorized agent of ADT.
+//
+//  DESCRIPTION
+//		Definition for Server side connection : listening and waiting for client sides to connect
+//      This operation is in the background so the UI available for the user
+//
+//
+//	Date		Name								Description
+//	----------------------------------------------------------------------------
+// 2024         Tzion
+//
+//=============================================================================
+
 
 public class ServerSideConnection extends SwingWorker<Void , List<String>> {
 
@@ -36,6 +58,8 @@ public class ServerSideConnection extends SwingWorker<Void , List<String>> {
 
                         Socket clientSide = serverSide.accept();
                         if(!Ips.contains(clientSide.getInetAddress().getHostAddress())) {
+                            LoggerInfo.getLogger().info("connection established for "+clientSide.getInetAddress().getHostAddress()+ ", on port "+portNumber);
+
                             System.out.println("connected to " + clientSide.getInetAddress().getHostAddress());
 
                             //in the following , the connection to the DB will establish

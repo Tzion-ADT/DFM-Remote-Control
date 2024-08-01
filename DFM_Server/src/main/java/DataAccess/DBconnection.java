@@ -2,6 +2,26 @@ package DataAccess;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  COPYRIGHT (c) 2024 ADT, INC.
+//
+//  This software is the property of ADT Industries, Inc.
+//  Any reproduction or distribution to a third party is
+//  strictly forbidden unless written permission is given by an
+//  authorized agent of ADT.
+//
+//  DESCRIPTION
+//		Definition for Singleton connection to DB for every client there is only on instance
+//
+//
+//	Date		Name								Description
+//	----------------------------------------------------------------------------
+// 2024         Tzion
+//
+//=============================================================================
+
 public class DBconnection implements AutoCloseable {
     private static Connection connectionInstance = null;
     //temp --> for tests ONLY
